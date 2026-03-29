@@ -39,16 +39,24 @@ def search(
 
     try:
         top_result = dataset["ds:4"][0][1][0][23][16]
-    except IndexError:
+    except (IndexError, TypeError, KeyError):
         top_result = None
 
     success = False
     # different idx for different countries and languages
-    for idx in range(len(dataset["ds:4"][0][1])):
+    try:
+        entries = dataset["ds:4"][0][1]
+    except (IndexError, TypeError, KeyError):
+        return []
+
+    if entries is None:
+        return []
+
+    for idx in range(len(entries)):
         try:
-            dataset = dataset["ds:4"][0][1][idx][22][0]
+            dataset = entries[idx][22][0]
             success = True
-        except Exception:
+        except (IndexError, TypeError):
             pass
     if not success:
         return []
